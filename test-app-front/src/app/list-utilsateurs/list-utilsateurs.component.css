@@ -1,0 +1,40 @@
+/* Votre code CSS existant */
+.table {
+  width: 100%;
+}
+
+th {
+  cursor: pointer;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.pagination button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.pagination button[disabled] {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.toast-container {
+  z-index: 1050;
+}
+
+.toast {
+  min-width: 300px;
+}

@@ -1,0 +1,165 @@
+<div class="container">
+  <!-- Titre de la page -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Liste Modules à tester</h2>
+    <button class="btn btn-primary" (click)="openModuleModal()">
+      <i class="bi bi-plus"></i> Ajouter un module
+    </button>
+    <button class="btn btn-primary" (click)="triggerSelectedScenarios()">
+       lancer
+    </button>
+  </div>
+
+  <!-- Affichage des modules avec un bouton pour ajouter un scénario -->
+  <div class="accordion" id="accordionPanelsStayOpenExample">
+    <div class="accordion-item" *ngFor="let module of modules; let i = index">
+      <h2 class="accordion-header d-flex justify-content-between align-items-center">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#collapse' + i" aria-expanded="true" [attr.aria-controls]="'collapse' + i">
+          {{ module.name }}
+        </button>
+        <div class="btn-group ms-2">
+          <button class="btn btn-outline-primary" (click)="openScenarioModal(module)">
+            <i class="bi bi-plus"></i>
+          </button>
+        </div>
+      </h2>
+      <div [id]="'collapse' + i" class="accordion-collapse collapse show">
+        <div class="accordion-body">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let scenario of module.scenarios">
+              <input type="checkbox" (change)="toggleScenarioSelection(scenario)" />
+
+              {{ scenario.name }}
+              <div>
+                <button class="btn btn-outline-secondary btn-sm ms-2">
+                  <i class="bi bi-eye"></i>
+                </button>
+                <button class="btn btn-outline-secondary btn-sm ms-2" (click)="triggerJob(scenario)">
+                  <i class="bi bi-play"></i>
+                </button>
+                <button class="btn btn-outline-secondary btn-sm ms-2" (click)="openScheduleModal(scenario)">
+                  <i class="bi bi-calendar"></i>
+                </button>
+                <!-- Nouveau bouton pour ouvrir le modal d'édition du script Jenkins -->
+                <button class="btn btn-outline-secondary btn-sm ms-2" (click)="openJenkinsModal(scenario)">
+                  <i class="bi bi-gear"></i>
+                </button>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal pour ajouter un nouveau scénario -->
+  <div class="modal fade" id="scenarioModal" tabindex="-1" aria-labelledby="scenarioModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="scenarioModalLabel">Ajouter un nouveau scénario</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form (ngSubmit)="addScenario()" #scenarioForm="ngForm">
+            <div class="mb-3">
+              <label for="scenarioName" class="form-label">Nom du scénario</label>
+              <input type="text" id="scenarioName" class="form-control" [(ngModel)]="newScenario.name" name="name" required>
+            </div>
+            <div class="mb-3">
+              <label for="scenarioDescription" class="form-label">Description du scénario</label>
+              <textarea id="scenarioDescription" class="form-control" [(ngModel)]="newScenario.description" name="description" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Ajouter</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal pour ajouter un nouveau module -->
+  <div class="modal fade" id="moduleModal" tabindex="-1" aria-labelledby="moduleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="moduleModalLabel">Ajouter un nouveau module</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form (ngSubmit)="addModule()" #moduleForm="ngForm">
+            <div class="mb-3">
+              <label for="moduleName" class="form-label">Nom du module</label>
+              <input type="text" id="moduleName" class="form-control" [(ngModel)]="newModule.name" name="name" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Ajouter</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nouveau Modal pour écrire le script Jenkins -->
+  <div class="modal fade" id="jenkinsModal" tabindex="-1" aria-labelledby="jenkinsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="jenkinsModalLabel">Écrire le script Jenkins pour {{ selectedScenario?.name }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" (click)="closeModal('jenkinsModal')" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form (ngSubmit)="createJenkinsJob()" #jenkinsForm="ngForm">
+            <div class="mb-3">
+              <label for="pipelineScript" class="form-label">Script du pipeline Jenkins</label>
+              <textarea id="pipelineScript" class="form-control" [(ngModel)]="pipelineScript" name="script" rows="10" required></textarea>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary" >Créer Job</button>
+              <button type="button" class="btn btn-secondary"  data-bs-dismiss="modal">Annuler</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="jobToast" class="toast fade">
+      <div class="toast-header">
+        <strong class="me-auto">Notification</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body">
+        Job Jenkins créé avec succès !
+      </div>
+    </div>
+  </div>
+
+    <!-- Modal pour planifier le lancement d'un job Jenkins -->
+    <div class="modal fade" id="scheduleModal" tabindex="-1" aria-labelledby="scheduleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="scheduleModalLabel">Planifier le job Jenkins pour {{ selectedScenario?.name }}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form (ngSubmit)="schedulePipeline()">
+              <div class="mb-3">
+                <label for="scheduleDate" class="form-label">Date</label>
+                <input type="date" id="scheduleDate" class="form-control" [(ngModel)]="selectedDate" name="date" required>
+              </div>
+              <div class="mb-3">
+                <label for="scheduleTime" class="form-label">Heure</label>
+                <input type="time" id="scheduleTime" class="form-control" [(ngModel)]="selectedTime" name="time" required>
+              </div>
+              <button type="submit" class="btn btn-primary">Planifier</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      </div>
+</div>

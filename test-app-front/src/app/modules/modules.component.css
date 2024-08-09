@@ -1,0 +1,23 @@
+/* modules.component.css */
+
+.container {
+    margin-top: 20px;
+  }
+  
+  .accordion-button {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .btn-outline-primary {
+    margin-left: auto;
+  }
+  
+  .btn-outline-secondary {
+    margin-left: 5px;
+  }
+  
+  .mt-3 {
+    margin-top: 1rem;
+  }
+  

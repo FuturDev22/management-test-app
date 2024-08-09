@@ -1,0 +1,10 @@
+/* You can add global styles to this file, and also import other style files */
+/* body {
+    margin-left: 250px;
+    transition: margin-left 0.3s;
+  }
+  
+  .sidebar.active ~ app-main-content {
+    margin-left: 0;
+  } */
+  @import "~bootstrap/dist/css/bootstrap.min.css";

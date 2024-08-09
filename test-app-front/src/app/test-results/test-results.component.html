@@ -1,0 +1,54 @@
+<!-- src/app/test-results/test-results.component.html -->
+<div class="container">
+    <h1>Résultats des Tests</h1>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>UID</th>
+          <th>Nom</th>
+          <th>Status</th>
+          <th>Durée (ms)</th>
+          <th>Détails</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let result of testResults">
+          <td>{{ result.uid }}</td>
+          <td>{{ result.name }}</td>
+          <td>{{ result.status }}</td>
+          <td>{{ result.time.duration }}</td>
+          <td><button type="button" class="btn btn-primary" (click)="onSelect(result)" data-bs-toggle="modal" data-bs-target="#testDetailModal">Voir les détails</button></td>
+        </tr>
+      </tbody>
+    </table>
+  
+    <!-- Modal -->
+    <div class="modal fade" id="testDetailModal" tabindex="-1" aria-labelledby="testDetailModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="testDetailModalLabel">Détails du Test</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div *ngIf="selectedTest">
+              <p><strong>Nom:</strong> {{ selectedTest.name }}</p>
+              <p><strong>Status:</strong> {{ selectedTest.status }}</p>
+              <p><strong>Durée:</strong> {{ selectedTest.time.duration }} ms</p>
+  
+              <h5>Étapes :</h5>
+              <ul>
+                <li *ngFor="let step of selectedTest.testStage.steps">
+                  {{ step.name }} - {{ step.status }} - {{ step.time.duration }} ms
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

@@ -1,0 +1,111 @@
+<!-- Container principal -->
+<div class="container mt-4">
+    <h2>Table des Utilisateurs</h2>
+    <div class="row mb-3">
+      <div class="col-md-10">
+        <input type="text" class="form-control" placeholder="Rechercher" [(ngModel)]="searchText" (input)="filterUsers()">
+      </div>
+      <div class="col-md-2 text-right">
+        <button class="btn btn-outline-secondary" (click)="openModal()">Nouveau <i class="fa-solid fa-plus"></i></button>
+      </div>
+    </div>
+  
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th (click)="sortTable('name')">Nom complet</th>
+          <th (click)="sortTable('email')">Adresse e-mail</th>
+          <th (click)="sortTable('password')">Mot de passe</th>
+          <th (click)="sortTable('role')">Rôle</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of paginatedUsers()">
+          <td>{{ user.name }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.password }}</td>
+          <td>{{ user.role }}</td>
+          <td>
+            <div class="btn-group">
+              <button type="button" class="btn btn-outline-primary me-2" (click)="openEditModal(user)"><i class="fa-solid fa-pencil"></i></button>
+              <button type="button" class="btn btn-outline-success me-2" (click)="confirmDelete(user)"><i class="fa fa-trash" aria-hidden="true"></i></button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  
+    <div class="pagination">
+      <button class="btn btn-outline-primary" (click)="previousPage()" [disabled]="page === 1">Précédent</button>
+      <span>Page {{page}} sur {{totalPages}}</span>
+      <button class="btn btn-outline-primary" (click)="nextPage()" [disabled]="page === totalPages">Suivant</button>
+    </div>
+  
+    <!-- Modal pour ajouter ou modifier un utilisateur -->
+    <div class="modal fade" tabindex="-1" role="dialog" [ngClass]="{'show': showModal}" [ngStyle]="{'display': showModal ? 'block' : 'none'}">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">{{ editMode ? 'Modifier Utilisateur' : 'Ajouter un utilisateur' }}</h5>
+            <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form (ngSubmit)="editMode ? updateUser() : addUser()">
+              <div class="form-group">
+                <label for="name">Nom complet</label>
+                <input type="text" class="form-control" id="name" [(ngModel)]="currentUser.name" name="name" required>
+              </div>
+              <div class="form-group">
+                <label for="email">Adresse e-mail</label>
+                <input type="email" class="form-control" id="email" [(ngModel)]="currentUser.email" name="email" required>
+              </div>
+              <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <div class="input-group">
+                  <input [type]="showPassword ? 'text' : 'password'" class="form-control" id="password" [(ngModel)]="currentUser.password" name="password" required>
+                  <div class="input-group-append">
+                    <button type="button" class="btn btn-outline-secondary" (click)="togglePasswordVisibility()">
+                      <i class="fa" [ngClass]="{'fa-eye': !showPassword, 'fa-eye-slash': showPassword}"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" (click)="generateAndSetPassword()">
+                      Générer
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="role">Rôle</label>
+                <select class="form-select" id="role" [(ngModel)]="currentUser.role" name="role" required>
+                  <option selected disabled value="">sélectionner rôle</option>
+                  <option value="Administrateur">Administrateur</option>
+                  <option value="Testeur">Testeur</option>
+                  <option value="Manager">Manager</option>
+                </select>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="closeModal()">Fermer</button>
+                <button type="submit" class="btn btn-primary">{{ editMode ? 'Modifier' : 'Ajouter' }}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Toast de confirmation de suppression -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+      <div class="toast" id="deleteToast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-body">
+          Voulez-vous vraiment supprimer cet utilisateur ?
+          <div class="mt-2 pt-2 border-top d-flex justify-content-end">
+            <button type="button" class="btn btn-danger btn-sm me-2" (click)="deleteUser()">Supprimer</button>
+            <button type="button" class="btn btn-secondary btn-sm" (click)="closeToast()">Annuler</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
