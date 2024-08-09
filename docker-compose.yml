@@ -1,0 +1,39 @@
+version: '3'
+services:
+  mysql-db:
+    image: mysql:latest
+    container_name: mysql-db
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=testing
+    networks:
+      - my-network
+
+  spring-boot-app:
+    image: oumaimax1999/springboot-testing
+    container_name: back_springboot_c
+    ports:
+      - "8085:8085"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/testing?createDatabaseIfNotExist=true&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    depends_on:
+      - mysql-db
+    networks:
+      - my-network
+
+  angular-app:
+    image: oumaimax1999/angular-testing
+    container_name: front_angular_c
+    ports:
+      - "4200:80"
+    depends_on:
+      - spring-boot-app
+    networks:
+      - my-network
+
+networks:
+  my-network:
